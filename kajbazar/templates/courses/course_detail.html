@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} | KajBazar{% endblock %}
+
+{% block page_title %}Course Details{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <!-- Course Header -->
+    <div class="h-48 bg-gradient-to-r from-teal-500 to-teal-700 flex items-center justify-center p-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-white text-center">{{ course.title }}</h1>
+    </div>
+    
+    <!-- Course Info -->
+    <div class="p-6">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+            <div class="flex items-center mb-4 md:mb-0">
+                <span class="px-3 py-1 bg-teal-100 text-teal-800 text-sm rounded-full mr-3">{{ course.category.name }}</span>
+                <span class="text-gray-600 text-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {{ course.duration }}
+                </span>
+            </div>
+            <div class="flex items-center">
+                <span class="text-2xl font-bold text-teal-700 mr-4">৳{{ course.price }}</span>
+                {% if user.is_authenticated and not is_enrolled %}
+                    <form action="{% url 'enroll_course' course.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
+                            Enroll Now
+                        </button>
+                    </form>
+                {% elif is_enrolled %}
+                    <span class="px-4 py-2 bg-green-100 text-green-800 rounded-md">
+                        Already Enrolled
+                    </span>
+                {% else %}
+                    <a href="{% url 'login' %}" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
+                        Login to Enroll
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Trainer Info -->
+        <div class="flex items-center mb-6 p-4 bg-gray-50 rounded-lg">
+            <div class="w-12 h-12 rounded-full bg-teal-500 flex items-center justify-center text-white font-bold mr-4">
+                {{ course.trainer_name|first|upper }}
+            </div>
+            <div>
+                <h3 class="font-semibold">{{ course.trainer_name }}</h3>
+                <p class="text-sm text-gray-600">Instructor</p>
+                {% if course.phone %}
+                    <p class="text-sm text-gray-600">{{ course.phone }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Course Description -->
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4">About This Course</h2>
+            <div class="prose max-w-none text-gray-700">
+                {{ course.description|linebreaks }}
+            </div>
+        </div>
+        
+        <!-- Course Meta -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Duration
+                </h3>
+                <p>{{ course.duration }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Category
+                </h3>
+                <p>{{ course.category.name }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+                <h3 class="font-semibold mb-2 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Added On
+                </h3>
+                <p>{{ course.created_at|date:"F j, Y" }}</p>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+            {% if user.is_authenticated and course.created_by == user %}
+                <a href="{% url 'course_edit' course.id %}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit Course
+                </a>
+                <a href="{% url 'course_delete' course.id %}" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete Course
+                </a>
+            {% endif %}
+            <a href="{% url 'home' %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Courses
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Similar Courses -->
+{% if similar_courses %}
+<div class="mt-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Similar Courses</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for similar in similar_courses %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div class="h-32 bg-gradient-to-r from-teal-500 to-teal-700 flex items-center justify-center">
+                <span class="text-white text-3xl font-bold">{{ similar.title|first|upper }}</span>
+            </div>
+            <div class="p-4">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-md font-semibold text-gray-800">{{ similar.title }}</h3>
+                    <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full">{{ similar.category.name }}</span>
+                </div>
+                <div class="flex justify-between mb-3">
+                    <div class="flex items-center text-gray-600 text-xs">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ similar.duration }}</span>
+                    </div>
+                    <div class="text-teal-700 font-bold text-sm">৳{{ similar.price }}</div>
+                </div>
+                <a href="{% url 'course_detail' similar.id %}" class="block w-full text-center px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors text-sm">
+                    View Details
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

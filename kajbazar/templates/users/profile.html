@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | KajBazar{% endblock %}
+
+{% block page_title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="space-y-6">
+                <div class="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-gray-200">
+                    <div class="w-24 h-24 rounded-full bg-teal-500 flex items-center justify-center text-white text-3xl font-bold">
+                        {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="text-gray-600">{{ user.email }}</p>
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-gray-800">Account Information</h3>
+                
+                <!-- Username -->
+                <div>
+                    <label for="{{ u_form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Username
+                    </label>
+                    {{ u_form.username }}
+                    {% if u_form.username.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ u_form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Email -->
+                <div>
+                    <label for="{{ u_form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Email Address
+                    </label>
+                    {{ u_form.email }}
+                    {% if u_form.email.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ u_form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- First Name and Last Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ u_form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            First Name
+                        </label>
+                        {{ u_form.first_name }}
+                        {% if u_form.first_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ u_form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ u_form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Last Name
+                        </label>
+                        {{ u_form.last_name }}
+                        {% if u_form.last_name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ u_form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-semibold text-gray-800 pt-4 border-t border-gray-200">Profile Information</h3>
+                
+                <!-- Bio -->
+                <div>
+                    <label for="{{ p_form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        Bio
+                    </label>
+                    {{ p_form.bio }}
+                    {% if p_form.bio.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ p_form.bio.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Location and Phone -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ p_form.location.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Location
+                        </label>
+                        {{ p_form.location }}
+                        {% if p_form.location.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ p_form.location.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ p_form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Phone Number
+                        </label>
+                        {{ p_form.phone }}
+                        {% if p_form.phone.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ p_form.phone.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Is Trainer -->
+                <div class="flex items-center">
+                    {{ p_form.is_trainer }}
+                    <label for="{{ p_form.is_trainer.id_for_label }}" class="ml-2 block text-sm text-gray-700">
+                        Register as a Trainer
+                    </label>
+                    {% if p_form.is_trainer.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ p_form.is_trainer.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Submit Buttons -->
+                <div class="flex justify-between pt-4 border-t border-gray-200">
+                    <a href="{% url 'dashboard' %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
+                        Update Profile
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
